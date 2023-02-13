@@ -1,6 +1,6 @@
 appName: mariadb
 
-image: mariadb
+image: mariadb:jammy
 replicas: 1
 
 # Database credentials
