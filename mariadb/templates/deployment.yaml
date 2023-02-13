@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.appName }} 
+  name: {{ .Values.appName }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      containers:
+      - image: {{ .Values.image }}
+        imagePullPolicy: IfNotPresent
+        name: {{ .Values.appName }}
+        ports:
+        - name: {{ .Values.appName }}
+          protocol: TCP
+          containerPort: 3306
+        env:
+        - name: MARIADB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.appName }}-secret
+              key: user
+        - name: MARIADB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.appName }}-secret
+              key: password
+        - name: MARIADB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.appName }}-secret
+              key: rootPassword 
+      {{ if .Values.volume.enabled }}
+        volumeMounts:
+          - name: {{ .Values.appName }}-volume
+            mountPath: {{ .Values.volume.mountPath }}
+      volumes:
+      - name: {{ .Values.appName }}-volume
+        persistentVolumeClaim:
+          claimName: {{ .Values.appName }}-volume-claim
+      {{ end }}

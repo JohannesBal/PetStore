@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  host: {{ .Values.appName }}-service
+  name: {{ .Values.dbName }}
+  port: {{ .Values.dbPort | quote }}
+kind: ConfigMap
+metadata:
+  name: {{ .Values.appName }}-config

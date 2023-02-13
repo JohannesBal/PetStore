@@ -1,0 +1,6 @@
+appName: flaskapi
+dbAppName: mariadb
+
+image: ricketson/projectapi
+
+replicas: 1

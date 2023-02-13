@@ -1,0 +1,65 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-database
+spec:
+  template:
+    metadata:
+      name: create-database
+    spec:
+      containers:
+      - name: create-database
+        image: {{ .Values.image }}
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.appName }}-config
+              key: host
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.appName }}-config
+              key: name
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.appName }}-secret
+              key: user
+        - name: DB_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.appName }}-secret
+              key: rootPassword
+        command:
+        - sh
+        - -c
+        - |
+            set -e
+            DB_HOST=$(echo "$DB_HOST")
+            DB_NAME=$(echo "$DB_NAME")
+            DB_USER=$(echo "$DB_USER")
+            DB_ROOT_PASSWORD=$(echo "$DB_ROOT_PASSWORD")
+            mysql -h"$DB_HOST" -uroot -p"$DB_ROOT_PASSWORD" -c <<-EOSQL
+            CREATE DATABASE IF NOT EXISTS $DB_NAME;
+            USE $DB_NAME;
+            CREATE TABLE IF NOT EXISTS owners (
+                owner_id int NOT NULL AUTO_INCREMENT,
+                first_name varchar(64) NOT NULL,
+                last_name varchar(64) NOT NULL,
+                email varchar(64) NOT NULL,
+                PRIMARY KEY (owner_id)
+            ); 
+            CREATE TABLE IF NOT EXISTS pets (
+                pet_id int NOT NULL AUTO_INCREMENT,
+                fk_owned_by int,
+                pet_name varchar(64) NOT NULL,
+                species varchar(64) NOT NULL,
+                PRIMARY KEY (pet_id),
+                FOREIGN KEY (fk_owned_by) 
+                    REFERENCES owners(owner_id)
+                    ON DELETE CASCADE
+            );
+            GRANT ALL PRIVILEGES ON $DB_NAME.* TO $DB_USER;
+            EOSQL
+      restartPolicy: OnFailure

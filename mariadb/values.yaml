@@ -1,0 +1,25 @@
+appName: mariadb
+
+image: mariadb
+replicas: 1
+
+# Database credentials
+dbUser: dXNlcg==
+dbPassword: c2VjcmV0cGFzcw==
+dbRootPassword: c2VjcmV0cGFzcw==
+dbName: customerdb
+dbPort: 3306
+
+# Persistent Volume
+volume:
+  enabled: true
+  mountPath: /var/lib/mysql
+  capacity: 1Gi
+  accessMode: ReadWriteOnce
+  hostPath: /mnt/mariadb-data
+  storageClass:
+    provisioner: kubernetes.io/gce-pd
+    type: pd-standard
+  claim:
+    accessMode: ReadWriteOnce
+    storageSize: 512M
