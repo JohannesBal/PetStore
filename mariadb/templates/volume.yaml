@@ -1,5 +1,25 @@
 {{ if .Values.volume.enabled }}
 apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Values.appName }}-volume-claim
+spec:
+  storageClassName: {{ .Values.appName }}-volume-class
+  accessModes:
+  - {{ .Values.volume.claim.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.volume.claim.storageSize }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .Values.appName }}-volume-class
+provisioner: {{ .Values.volume.storageClass.provisioner }}
+parameters:
+  type: {{ .Values.volume.storageClass.type }}
+---
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ .Values.appName }}-volume
@@ -11,24 +31,4 @@ spec:
   storageClassName: {{ .Values.appName }}-volume-class
   hostPath:
     path: {{ .Values.volume.hostPath }}
----
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: {{ .Values.appName }}-volume-class
-provisioner: {{ .Values.volume.storageClass.provisioner }}
-parameters:
-  type: {{ .Values.volume.storageClass.type }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: {{ .Values.appName }}-volume-claim
-spec:
-  storageClassName: {{ .Values.appName }}-volume-class
-  accessModes:
-  - {{ .Values.volume.claim.accessMode }}
-  resources:
-    requests:
-      storage: {{ .Values.volume.claim.storageSize }}
 {{ end }}

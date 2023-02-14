@@ -62,4 +62,25 @@ spec:
             );
             GRANT ALL PRIVILEGES ON $DB_NAME.* TO $DB_USER;
             EOSQL
+      initContainers:
+      - name: wait-for-db
+        image: busybox
+        env:
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: {{ .Values.appName }}-config
+              key: host
+        - name: DB_PORT
+          value: "3306"
+        command:
+        - /bin/sh
+        - -c
+        - |
+            set -e
+            DB_HOST=$(echo $DB_HOST)
+            DB_PORT=$(echo $DB_PORT)
+            until nc -vz $DB_HOST $DB_PORT; do 
+              sleep 5
+            done
       restartPolicy: OnFailure
