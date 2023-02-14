@@ -4,3 +4,7 @@ dbAppName: mariadb
 image: ricketson/projectapi
 
 replicas: 1
+
+# Ingress hostname 
+# Empty for None
+host: #petstore.com

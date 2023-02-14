@@ -18,7 +18,8 @@ spec:
   tls:
   - secretName: app-ingress-tls-secret
   rules:
-  - http:
+  - host: {{ default .Values.host "" }}
+    http:
       paths:
       - path: /
         pathType: Prefix
