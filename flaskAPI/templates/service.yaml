@@ -8,7 +8,7 @@ spec:
   ports:
   - name: {{ .Values.appName }}
     port: 80
-    targetPort: 8000
+    targetPort: {{ .Values.appName }}
     protocol: TCP
   selector:
     app: {{ .Values.appName }}

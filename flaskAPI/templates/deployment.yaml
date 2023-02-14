@@ -18,6 +18,10 @@ spec:
       - image: {{ .Values.image }}
         imagePullPolicy: Always
         name: {{ .Values.appName }}
+        ports:
+        - name: {{ .Values.appName }}
+          protocol: TCP
+          containerPort: 8000
         env:
         - name: DB_HOST
           valueFrom:
