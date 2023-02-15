@@ -10,11 +10,12 @@ data:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: app-ingress
+  name: app-api-ingress
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
+  ingressClassName: nginx
   tls:
   - secretName: app-ingress-tls-secret
   rules:
@@ -25,9 +26,9 @@ spec:
         pathType: Prefix
         backend:
           service:
-            name: {{ .Values.appName }}-service
+            name: {{ .Values.flaskAPI.appName }}-service
             port:
-              name: {{ .Values.appName }}
+              name: {{ .Values.flaskAPI.appName }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -35,10 +36,11 @@ metadata:
   name: app-help-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/permanent-redirect: https://github.com/ricket-son/PetStore
+    nginx.ingress.kubernetes.io/permanent-redirect: {{ .Values.helpUrl | default "https://github.com/ricket-son/PetStore" }}
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
 spec:
+  ingressClassName: nginx
   tls:
   - secretName: app-ingress-tls-secret
   rules:
