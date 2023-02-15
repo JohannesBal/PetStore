@@ -90,6 +90,8 @@ Just insert your values. If you dont want a volume included, just change `enable
     
     # POST "/pets"
     -> requests: pet model in json
+    
+    # DELETE "/pets/{petId}"
 
 ### Importing legacy data
 
@@ -132,5 +134,6 @@ Just insert your values. If you dont want a volume included, just change `enable
 		species varchar(64) NOT NULL,
 		PRIMARY KEY (pet_id),
 		FOREIGN KEY (fk_owned_by)
-                REFERENCES owners(owner_id)
+			REFERENCES owners(owner_id)
+			ON DELETE CASCADE
 
