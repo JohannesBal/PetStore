@@ -58,6 +58,31 @@ To access the ingress via hostname, you would need to modify your hosts-file by 
 Just insert your values. If you dont want a volume included, just change `enabled: false`.
 
 
+### Command line configuration samples
+
+#### Changing certificate data
+
+	cert=$(cat certfile.cert | base64 | grep '\t' '\0')
+	key=$(cat certfile.key | base64 | grep '\t' '\0')
+	
+	helm install petstore petstore-app --set tls.crt=$cert --set tls.key=$key 
+
+#### Disabling volume for database
+
+	helm install petstore petstore-app --set mariadb.volume.enabled=false
+
+#### Modifying credentials on database
+
+> Note that it could cause issues when database volume already exists and you modify the user credentials as the user you apply would not be recognized by the database
+
+	dbUser=$(echo -n sampleUser | base64)
+	dbPassword=$(echo -n samplePass | base64)
+	#dbRootPassword= ...
+	
+	helm install petstore petstore-app --set mariadb.dbUser=$dbUser --set mariadb.dbPassword=$dbPassword
+
+
+
 ## API Structure / Endpoints
 
 ### Owners
