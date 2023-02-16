@@ -62,8 +62,8 @@ Just insert your values. If you dont want a volume included, just change `enable
 
 #### Changing certificate data
 
-	cert=$(cat certfile.cert | base64 | grep '\t' '\0')
-	key=$(cat certfile.key | base64 | grep '\t' '\0')
+	cert=$(cat certfile.cert | base64 | tr '\t' '\0')
+	key=$(cat certfile.key | base64 | tr '\t' '\0')
 	
 	helm install petstore petstore-app --set tls.crt=$cert --set tls.key=$key 
 
